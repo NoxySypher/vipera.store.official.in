@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vipera Custom Ergonomic Mouse</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #fbfbfd;
+      color: #1d1d1f;
+      overflow-x: hidden;
+    }
+
+    /* Navigation */
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(20px);
+      padding: 14px 30px;
+      z-index: 1000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    nav .logo { 
+      color: #fff; 
+      font-weight: 600; 
+      font-size: 1.4rem; 
+      letter-spacing: -0.5px;
+      white-space: nowrap;
+    }
+    nav ul { 
+      list-style: none; 
+      display: flex; 
+      gap: 24px; 
+      margin: 0;
+      padding: 0;
+      align-items: center; 
+    }
+    nav ul li a { 
+      color: #f5f5f7; 
+      text-decoration: none; 
+      transition: opacity 0.2s; 
+      font-size: 0.95rem;
+      white-space: nowrap;
+      opacity: 0.8;
+    }
+    nav ul li a:hover { opacity: 1; color: #0071e3; }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      padding: 150px 20px 60px;
+    }
+    .hero h1 { 
+      font-size: 3.8rem; 
+      font-weight: 700;
+      letter-spacing: -1.5px;
+      margin-bottom: 12px; 
+    }
+    .hero p { 
+      font-size: 1.5rem; 
+      color: #86868b; 
+      font-weight: 400;
+    }
+
+    /* Gallery */
+    .mouse-gallery {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin: 60px auto;
+      max-width: 1200px;
+      padding: 0 20px;
+      flex-wrap: wrap;
+    }
+    .mouse-gallery img {
+      width: 360px;
+      max-width: 100%;
+      height: auto;
+      border-radius: 18px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+      transform: scale(0.95);
+      transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      opacity: 0;
+      background: #000;
+    }
+    .mouse-gallery img.active {
+      opacity: 1;
+      transform: scale(1);
+    }
+    .mouse-gallery img:hover { 
+      transform: scale(1.03); 
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    }
+
+    /* Card Containers */
+    .apple-card {
+      max-width: 800px;
+      margin: 0 auto 80px;
+      padding: 45px;
+      background: #ffffff;
+      border-radius: 20px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .apple-card.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .apple-card h2 { 
+      font-size: 2.2rem; 
+      letter-spacing: -0.5px;
+      margin-top: 0;
+      margin-bottom: 25px; 
+    }
+    
+    .section-subtitle {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-top: 35px;
+      margin-bottom: 15px;
+      border-bottom: 1px solid #e5e5ea;
+      padding-bottom: 8px;
+      color: #1d1d1f;
+    }
+
+    /* Forms */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .full-width {
+      grid-column: span 2;
+    }
+    .form-group { 
+      margin-bottom: 20px; 
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #515154;
+      margin-bottom: 8px;
+    }
+    .form-control {
+      width: 100%;
+      padding: 16px;
+      font-size: 1rem;
+      border: 1px solid #d2d2d7;
+      border-radius: 12px;
+      background: #fbfbfd;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .form-control:focus { 
+      border-color: #0071e3; 
+      outline: none; 
+      background: #fff;
+      box-shadow: 0 0 0 4px rgba(0,113,227,0.15);
+    }
+
+    /* Custom Payment Selection Grid */
+    .payment-options {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+    .payment-card {
+      border: 2px solid #e5e5ea;
+      border-radius: 12px;
+      padding: 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #fff;
+    }
+    .payment-card:hover {
+      border-color: #0071e3;
+    }
+    .payment-card.selected {
+      border-color: #0071e3;
+      background: rgba(0, 113, 227, 0.04);
+    }
+    .payment-card input[type="radio"] {
+      accent-color: #0071e3;
+      transform: scale(1.2);
+    }
+    .payment-card-label {
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .payment-details-box {
+      background: #f5f5f7;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 25px;
+      display: none;
+    }
+    .payment-details-box.active {
+      display: block;
+    }
+
+    .price-summary {
+      background: #f5f5f7;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 25px 0;
+    }
+    .price-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-size: 1rem;
+      color: #515154;
+    }
+    .price-row.total {
+      border-top: 1px solid #d2d2d7;
+      padding-top: 12px;
+      margin-bottom: 0;
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: #1d1d1f;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 18px;
+      font-size: 1.15rem;
+      font-weight: 600;
+      background: #0071e3;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .submit-btn:hover { background: #0077ed; }
+
+    /* Interactive Account Tabs */
+    .tab-buttons {
+      display: flex;
+      gap: 10px;
+      border-bottom: 1px solid #e5e5ea;
+      margin-bottom: 25px;
+    }
+    .tab-btn {
+      padding: 12px 20px;
+      border: none;
+      background: none;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #86868b;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+    }
+    .tab-btn.active {
+      color: #0071e3;
+      border-bottom-color: #0071e3;
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Support AI Chatbot */
+    .chat-container {
+      border: 1px solid #e5e5ea;
+      border-radius: 16px;
+      overflow: hidden;
+      background: #fafafa;
+      display: flex;
+      flex-direction: column;
+      height: 400px;
+    }
+    .chat-messages {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .message {
+      max-width: 80%;
+      padding: 12px 16px;
+      border-radius: 16px;
+      font-size: 0.95rem;
+      line-height: 1.4;
+    }
+    .message.bot {
+      background: #e9e9eb;
+      color: #000;
+      align-self: flex-start;
+      border-bottom-left-radius: 4px;
+    }
+    .message.user {
+      background: #0071e3;
+      color: #fff;
+      align-self: flex-end;
+      border-bottom-right-radius: 4px;
+    }
+    .chat-input-area {
+      display: flex;
+      padding: 12px;
+      background: #fff;
+      border-top: 1px solid #e5e5ea;
+      gap: 10px;
+    }
+    .chat-input-area input {
+      flex: 1;
+      padding: 12px 16px;
+      border: 1px solid #d2d2d7;
+      border-radius: 20px;
+      outline: none;
+    }
+    .chat-send-btn {
+      background: #0071e3;
+      color: #fff;
+      border: none;
+      padding: 0 20px;
+      border-radius: 20px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    @media (max-width: 600px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .full-width { grid-column: span 1; }
+      .payment-options { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav>
+    <div class="logo">Vipera</div>
+    <ul>
+      <li><a href="#product">Product</a></li>
+      <li><a href="#delivery">Delivery</a></li>
+      <li><a href="#account">Account</a></li>
+      <li><a href="#support">Support</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <h1>Vipera Custom Ergonomic Mouse</h1>
+    <p>Precision. Elegance. Performance.</p>
+  </section>
+
+  <!-- Product Showcase -->
+  <section id="product" class="mouse-gallery">
+    <img src="c:\Users\Arya\Downloads\Designer.png" alt="Vipera Mouse Left Side Customizable Buttons">
+    <img src="c:\Users\Arya\Downloads\Gemini_Generated_Image_xj8460xj8460xj84.png" alt="Vipera Mouse Underside Controls">
+    <img src="c:\Users\Arya\Downloads\Copilot_20261010_105154.png" alt="Vipera Mouse Top View and RGB">
+  </section>
+
+  <!-- Delivery & Order Form -->
+  <section id="delivery" class="apple-card">
+    <h2>Checkout & Delivery</h2>
+    <form id="orderForm">
+      
+      <!-- Country & Currency Selector -->
+      <div class="form-group">
+        <label for="country">Select Country / Region</label>
+        <select id="country" class="form-control" onchange="updateCurrency()">
+          <option value="IN" data-symbol="₹" data-rate="1" data-base="12999">India (₹ INR)</option>
+          <option value="US" data-symbol="$" data-rate="0.012" data-base="149.99">United States ($ USD)</option>
+          <option value="UK" data-symbol="£" data-rate="0.0095" data-base="119.99">United Kingdom (£ GBP)</option>
+          <option value="EU" data-symbol="€" data-rate="0.011" data-base="139.99">European Union (€ EUR)</option>
+          <option value="CA" data-symbol="$" data-rate="0.016" data-base="199.99">Canada ($ CAD)</option>
+          <option value="AU" data-symbol="$" data-rate="0.018" data-base="219.99">Australia ($ AUD)</option>
+          <option value="JP" data-symbol="¥" data-rate="1.8" data-base="22500">Japan (¥ JPY)</option>
+        </select>
+      </div>
+
+      <!-- Customer Contact -->
+      <div class="section-subtitle">1. Contact Information</div>
+      <div class="form-grid">
+        <div class="form-group full-width">
+          <label for="fullName">Full Name</label>
+          <input type="text" id="fullName" class="form-control" placeholder="John Doe" required>
+        </div>
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" class="form-control" placeholder="john@example.com" required>
+        </div>
+        <div class="form-group">
+          <label for="phone">Phone Number</label>
+          <input type="tel" id="phone" class="form-control" placeholder="+91 98765 43210" required>
+        </div>
+      </div>
+
+      <!-- Shipping Address -->
+      <div class="section-subtitle">2. Shipping Address</div>
+      <div class="form-grid">
+        <div class="form-group full-width">
+          <label for="address">Street Address / House No.</label>
+          <input type="text" id="address" class="form-control" placeholder="123 Innovation Way, Apt 4B" required>
+        </div>
+        <div class="form-group">
+          <label for="city">City</label>
+          <input type="text" id="city" class="form-control" placeholder="Hyderabad" required>
+        </div>
+        <div class="form-group">
+          <label for="state">State / Province</label>
+          <input type="text" id="state" class="form-control" placeholder="Telangana" required>
+        </div>
+        <div class="form-group">
+          <label for="zip">ZIP / Postal Code</label>
+          <input type="text" id="zip" class="form-control" placeholder="500081" required>
+        </div>
+      </div>
+
+      <!-- Product Configuration -->
+      <div class="section-subtitle">3. Product Configuration</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="variant">Color Finish</label>
+          <select id="variant" class="form-control">
+            <option value="black">Matte Stealth Black</option>
+            <option value="white">Arctic White</option>
+            <option value="cyber">Cyberpunk RGB Edition</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="switches">Micro-Switch Type</label>
+          <select id="switches" class="form-control">
+            <option value="tactile">TTC Gold (Tactile & Crisp)</option>
+            <option value="silent">Kailh Silent Yellow (Whisper Quiet)</option>
+            <option value="optical">Omron Optical (Ultra Fast)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Payment Method Selection -->
+      <div class="section-subtitle">4. Payment Method</div>
+      <div class="payment-options">
+        <label class="payment-card selected" onclick="selectPayment('card')">
+          <input type="radio" name="paymentMethod" value="card" checked>
+          <span class="payment-card-label">Credit / Debit Card</span>
+        </label>
+        <label class="payment-card" onclick="selectPayment('upi')">
+          <input type="radio" name="paymentMethod" value="upi">
+          <span class="payment-card-label">UPI / Instant Pay</span>
+        </label>
+        <label class="payment-card" onclick="selectPayment('wallet')">
+          <input type="radio" name="paymentMethod" value="wallet">
+          <span class="payment-card-label">Digital Wallet</span>
+        </label>
+        <label class="payment-card" onclick="selectPayment('cod')">
+          <input type="radio" name="paymentMethod" value="cod">
+          <span class="payment-card-label">Cash on Delivery</span>
+        </label>
+      </div>
+
+      <!-- Payment Details Panels -->
+      <div id="card-details" class="payment-details-box active">
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label>Card Number</label>
+            <input type="text" class="form-control" placeholder="4532 •••• •••• 8892">
+          </div>
+          <div class="form-group">
+            <label>Expiry Date</label>
+            <input type="text" class="form-control" placeholder="MM/YY">
+          </div>
+          <div class="form-group">
+            <label>CVV / CVC</label>
+            <input type="password" class="form-control" placeholder="123">
+          </div>
+        </div>
+      </div>
+
+      <div id="upi-details" class="payment-details-box">
+        <div class="form-group">
+          <label>Enter UPI ID (VPA)</label>
+          <input type="text" class="form-control" placeholder="username@upi">
+        </div>
+        <p style="font-size: 0.85rem; color: #86868b; margin: 0;">A payment request will be sent directly to your UPI app.</p>
+      </div>
+
+      <div id="wallet-details" class="payment-details-box">
+        <p style="margin-top: 0;">Select your wallet service:</p>
+        <button type="button" class="submit-btn" style="background: #000; margin-bottom: 10px;">Apple Pay</button>
+        <button type="button" class="submit-btn" style="background: #4285f4;">Google Pay</button>
+      </div>
+
+      <div id="cod-details" class="payment-details-box">
+        <p style="margin: 0; color: #515154;">Pay via Cash or Card upon physical delivery of your order.</p>
+      </div>
+
+      <!-- Price Dynamic Summary -->
+      <div class="price-summary">
+        <div class="price-row">
+          <span>Vipera Ergonomic Mouse</span>
+          <span id="basePriceDisplay">₹12,999</span>
+        </div>
+        <div class="price-row">
+          <span>Express Shipping</span>
+          <span id="shippingDisplay">FREE</span>
+        </div>
+        <div class="price-row total">
+          <span>Total Amount</span>
+          <span id="totalPriceDisplay">₹12,999</span>
+        </div>
+      </div>
+
+      <button type="submit" class="submit-btn">Complete Purchase</button>
+    </form>
+  </section>
+
+  <!-- Account Section -->
+  <section id="account" class="apple-card">
+    <h2>Account Information</h2>
+    <div class="tab-buttons">
+      <button class="tab-btn active" onclick="switchTab('profile')">Profile</button>
+      <button class="tab-btn" onclick="switchTab('orders')">Order History</button>
+      <button class="tab-btn" onclick="switchTab('cloud')">Mouse Profiles</button>
+    </div>
+
+    <div id="tab-profile" class="tab-content active">
+      <div class="form-group">
+        <label>Logged in as</label>
+        <input type="text" class="form-control" value="arya@example.com" disabled>
+      </div>
+      <p style="color: #86868b;">Manage your saved addresses, cloud hardware settings, and warranty registrations.</p>
+    </div>
+
+    <div id="tab-orders" class="tab-content">
+      <div style="padding: 20px; background: #f5f5f7; border-radius: 12px; margin-bottom: 10px;">
+        <strong style="display:block;">Order #VIP-99201</strong>
+        <span style="color: #86868b; font-size: 0.9rem;">Status: Delivered • Vipera Wireless Edition</span>
+      </div>
+    </div>
+
+    <div id="tab-cloud" class="tab-content">
+      <p style="color: #515154;">Cloud profile sync for nRF52840 MCU onboard memory:</p>
+      <label style="display:flex; align-items:center; gap:10px; cursor:pointer;">
+        <input type="checkbox" checked style="accent-color: #0071e3;">
+        <span>Auto-sync DPI profiles across desktop machines</span>
+      </label>
+    </div>
+  </section>
+
+  <!-- Support Section with AI Chatbot -->
+  <section id="support" class="apple-card">
+    <h2>Vipera AI Support</h2>
+    <p style="color: #86868b; margin-bottom: 20px;">Ask our AI assistant about setup, specifications, or pairing troubleshooting.</p>
+    
+    <div class="chat-container">
+      <div class="chat-messages" id="chatMessages">
+        <div class="message bot">Hello! I am your Vipera Hardware Assistant. Ask me about DPI settings, Bluetooth pairing, or battery life.</div>
+      </div>
+      <div class="chat-input-area">
+        <input type="text" id="chatInput" placeholder="Type your question..." onkeypress="handleKeyPress(event)">
+        <button class="chat-send-btn" onclick="sendMessage()">Send</button>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // Scroll Animation Observer
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("active");
+        }
+      });
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll('.mouse-gallery img, .apple-card').forEach(el => {
+      observer.observe(el);
+    });
+
+    // Dynamic Currency Switcher
+    function updateCurrency() {
+      const select = document.getElementById("country");
+      const option = select.options[select.selectedIndex];
+      const symbol = option.getAttribute("data-symbol");
+      const base = parseFloat(option.getAttribute("data-base"));
+
+      const formatted = symbol + " " + base.toLocaleString();
+      document.getElementById("basePriceDisplay").innerText = formatted;
+      document.getElementById("totalPriceDisplay").innerText = formatted;
+    }
+
+    // Payment Option Selector
+    function selectPayment(method) {
+      document.querySelectorAll('.payment-card').forEach(card => card.classList.remove('selected'));
+      document.querySelectorAll('.payment-details-box').forEach(box => box.classList.remove('active'));
+
+      const selectedRadio = document.querySelector(`input[name="paymentMethod"][value="${method}"]`);
+      if (selectedRadio) {
+        selectedRadio.checked = true;
+        selectedRadio.closest('.payment-card').classList.add('selected');
+      }
+
+      const targetBox = document.getElementById(`${method}-details`);
+      if (targetBox) {
+        targetBox.classList.add('active');
+      }
+    }
+
+    // Account Section Tabs
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+      event.target.classList.add('active');
+      document.getElementById(`tab-${tabName}`).classList.add('active');
+    }
+
+    // Support Chatbot Logic
+    function handleKeyPress(e) {
+      if (e.key === 'Enter') sendMessage();
+    }
+
+    function sendMessage() {
+      const input = document.getElementById('chatInput');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const messagesDiv = document.getElementById('chatMessages');
+
+      // Add user message
+      const userMsg = document.createElement('div');
+      userMsg.className = 'message user';
+      userMsg.innerText = text;
+      messagesDiv.appendChild(userMsg);
+
+      input.value = '';
+
+      // Generate bot response
+      setTimeout(() => {
+        const botMsg = document.createElement('div');
+        botMsg.className = 'message bot';
+        
+        const query = text.toLowerCase();
+        if (query.includes('pair') || query.includes('bluetooth')) {
+          botMsg.innerText = "To pair Bluetooth: Press and hold the dedicated tactile Bluetooth button on the underside for 3 seconds until the green LED flashes rapidly.";
+        } else if (query.includes('dpi') || query.includes('sensor')) {
+          botMsg.innerText = "The Vipera features the PixArt PAW3395 sensor supporting up to 26,000 DPI with custom 50 DPI increment adjustments.";
+        } else if (query.includes('battery') || query.includes('power')) {
+          botMsg.innerText = "Powered by the ultra-low-power Nordic nRF52840 MCU, the battery lasts up to 90 hours of continuous gaming on 1KHz polling.";
+        } else {
+          botMsg.innerText = "Thank you for asking! For technical assistance, your order status, or custom component options, our team is always here to help.";
+        }
+
+        messagesDiv.appendChild(botMsg);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      }, 500);
+
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+  </script>
+</body>
+</html>
